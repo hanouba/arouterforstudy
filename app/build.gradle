@@ -10,6 +10,11 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ AROUTER_MODULE_NAME : project.getName() ]
+            }
+        }
 
 
         def isBuildAll = (buildMain as boolean) && (buildTest as boolean)
@@ -18,6 +23,11 @@ android {
         lintOptions{
             checkReleaseBuilds false
             abortOnError false
+        }
+
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi' , 'x86'//, 'armeabi-v7a', 'x86_64', 'arm64-v8a'
         }
     }
     buildTypes {
@@ -29,11 +39,13 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation "junit:junit:$rootProject.junitVersion"
-
-    implementation project(':commonlib')
+    //
+        annotationProcessor "com.alibaba:arouter-compiler:$rootProject.arouterCompilerVersion"
+        implementation "com.alibaba:arouter-api:$rootProject.arouterVersion"
+    api project(':app_common')
 }
